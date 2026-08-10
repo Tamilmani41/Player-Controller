@@ -2,15 +2,12 @@ using UnityEngine;
 
 public class PlayerInput : MonoBehaviour
 {
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
+    /// <Summary>
+    /// Player : Unity's new input system reads the input from unity and gives required input to the playerController. *Unity dependent*
+    /// </Summary>
+    
+    public void Tick()
     {
-        
-    }
 
-    // Update is called once per frame
-    void Update()
-    {
-        
     }
 }

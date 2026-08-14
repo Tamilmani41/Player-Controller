@@ -9,19 +9,25 @@ public class PlayerController : MonoBehaviour
 {
     [SerializeField] private PlayerInput input;
     [SerializeField] private PlayerSettings settings;   // Reference to player settings for parameters.
+    [SerializeField] private RigidBodyAdapter rigidBodyAdapter;
     private Grounddetector grounddetector;
+    private PhysicsQueries physicsQueries;
     private MovementModule movementModule;
     private JumpModule jumpModule;
 
     private float moveDir;
     public float FinalSpeed { get; private set; }   // Final movement speed calculated by the movement module.
 
+    private bool isGrounded = false;
+    private bool jumpQueue = false;
+
     private void Awake()
     {
         if (input == null)
             input = gameObject.GetComponent<PlayerInput>();
         // Initialize all modules here.
-        grounddetector = new Grounddetector();
+        physicsQueries = new PhysicsQueries(rigidBodyAdapter);  // Initialize physics queries with the rigid body adapter.
+        grounddetector = new Grounddetector(settings, physicsQueries);  // Initialize ground detector with player settings and physics queries.
         movementModule = new MovementModule(settings);
         jumpModule = new JumpModule();
     }
@@ -36,13 +42,22 @@ public class PlayerController : MonoBehaviour
         // Call Module Ticks's || tells the modules to operate at the exact order.
         input.Tick();   // Update input module to read the latest player inputs.
         moveDir = input.Move.x; // Get the horizontal movement direction from player input.
+        jumpQueue = input.JumpQueued; // Get the jump input state from player input.
 
-       //grounddetector.Tick();
+        GroundDetection();   // Check if the player is grounded.
+
         movementModule.Tick(moveDir);   // Update movement module with the current move direction.
 
         FinalSpeed = movementModule.FinalMove;   // Get the final movement speed calculated by the movement module.
 
         jumpModule.Tick();
+    }
+
+    public void GroundDetection()
+    {
+        grounddetector.Tick();  // Update ground detector module to check if the player is grounded.
+        isGrounded = grounddetector.IsGrounded;
+        Debug.Log(isGrounded); // Log the grounded state for debugging purposes.
     }
 
 }

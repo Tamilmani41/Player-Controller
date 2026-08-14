@@ -19,4 +19,9 @@ public class RigidBodyAdapter : MonoBehaviour   // This class serves as an adapt
         // Apply the final movement speed calculated by the PlayerController to the Rigidbody's velocity.
         rb.linearVelocity = new Vector2(player.FinalSpeed, rb.linearVelocity.y);   // Set the Rigidbody's horizontal velocity based on the player's final speed, while preserving the vertical velocity.
     }
+    public bool RayCast(float distance)
+    {
+        RaycastHit2D hit = Physics2D.Raycast(rb.position, Vector2.down, distance);   // Perform a raycast downwards from the Rigidbody's position to check for ground collision within the specified distance.
+        return hit.collider != null; // Return true if the raycast hit something (indicating the player is grounded), otherwise return false.
+    }
 }

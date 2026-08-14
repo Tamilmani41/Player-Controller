@@ -9,6 +9,13 @@ public class PlayerInput : MonoBehaviour
     private PlayerInputActions playerAction;
     public Vector2 Move { get; private set; }
     public bool JumpQueued { get; private set; } = false;
+
+    private void Awake()
+    {
+        playerAction = new PlayerInputActions();    // Initialize the PlayerInputActions instance.
+        playerAction.Gameplay.Enable(); // Enable the Gameplay action map when the script is initialized.
+        Debug.Log("PlayerInput initialized and Gameplay action map enabled.");
+    }
     public void Tick()
     {
         Move = playerAction.Gameplay.Move.ReadValue<Vector2>();

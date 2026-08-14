@@ -6,10 +6,6 @@
 [System.Serializable]   // This attribute allows the class to be serialized, making it possible to save and load settings, or to expose them in the Unity Inspector.
 public class PlayerSettings
 {
-    public PlayerSettings()
-    {
-        // Default constructor can be used to initialize default values for player settings if needed.
-    }
     public float moveSpeed = 5f;
     public float jumpHeight = 2f;
 }

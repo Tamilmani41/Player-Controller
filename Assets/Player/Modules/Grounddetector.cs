@@ -3,12 +3,15 @@
 /// </summary>
 public class Grounddetector
 {
+    private bool isGrounded;
+    private float offset = 0.1f; // Offset to check slightly below the player's position for ground detection.
+    private float groundCheckDistance = 0.2f; // Distance to check for ground below the player.
     public Grounddetector()
     {
-        // Constructor logic here
+        
     }
     public void Tick()
     {
-        // Ground detection logic here
+        
     }
 }

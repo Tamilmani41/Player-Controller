@@ -9,6 +9,7 @@ public class PlayerSettings
     public float moveSpeed = 5f;
     public float jumpHeight = 2f;
     public float groundCheckDistance = 0.5f;
+    public float jumpforce = 5f;
     public enum Check
     {
         Down, Up, Left, Right

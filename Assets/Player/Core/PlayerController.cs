@@ -17,9 +17,10 @@ public class PlayerController : MonoBehaviour
 
     private float moveDir;
     public float FinalSpeed { get; private set; }   // Final movement speed calculated by the movement module.
-
+    public float Jumpforce { get; private set; }
+    
+    public bool JumpQueue = false;
     private bool isGrounded = false;
-    private bool jumpQueue = false;
     private bool debugLogPrint = false;
     private void Awake()
     {
@@ -29,7 +30,7 @@ public class PlayerController : MonoBehaviour
         physicsQueries = new PhysicsQueries(rigidBodyAdapter);  // Initialize physics queries with the rigid body adapter.
         grounddetector = new Grounddetector(settings, physicsQueries);  // Initialize ground detector with player settings and physics queries.
         movementModule = new MovementModule(settings);
-        jumpModule = new JumpModule();
+        jumpModule = new JumpModule(settings);
     }
     
     // For now Player controller uses the Update method to tick the modules, but in the future, it can be changed to a more sophisticated system if needed.
@@ -46,13 +47,13 @@ public class PlayerController : MonoBehaviour
 
         MovementCalculation(); // Calculate movement based on input and grounded state.
 
-        jumpModule.Tick();
+        JumpCalculation();
     } 
     private void InputDetection()
     {
         input.Tick();   // Update input module to read the latest player inputs.
         moveDir = input.Move.x; // Get the horizontal movement direction from player input.
-        jumpQueue = input.JumpQueued; // Get the jump input state from player input.
+        JumpQueue = input.JumpQueued; // Get the jump input state from player input.
         debugLogPrint = input.DebugLogPrint;
     }
     private void GroundDetection()
@@ -64,6 +65,12 @@ public class PlayerController : MonoBehaviour
     {
         movementModule.Tick(moveDir);   // Update movement module with the current move direction.
         FinalSpeed = movementModule.FinalMove;   // Get the final movement speed calculated by the movement module.
+    }
+    private void JumpCalculation()
+    {
+        JumpQueue = input.IsJumpQueued();
+        jumpModule.Tick(isGrounded, JumpQueue);
+        Jumpforce = jumpModule.Jumpforce;
     }
     private void OnDrawGizmosSelected()
     {

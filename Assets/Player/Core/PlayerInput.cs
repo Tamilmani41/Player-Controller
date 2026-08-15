@@ -36,4 +36,10 @@ public class PlayerInput : MonoBehaviour
         //    DebugLogPrint = false;
         //}
     }
+    public bool IsJumpQueued()
+    {
+        bool jumped = JumpQueued;
+        JumpQueued = false;
+        return jumped;
+    }
 }

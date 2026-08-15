@@ -17,6 +17,7 @@ public class PhysicsQueries
 
     public bool RayCast(float distance)
     {
+        // Perform a raycast using the RigidBodyAdapter to check for collisions within the specified distance.
         return rigidBodyAdapter.RayCast(distance);
     }
 }

@@ -6,6 +6,7 @@ using UnityEngine;
 public class RigidBodyAdapter : MonoBehaviour   // This class serves as an adapter for Unity's Rigidbody component, allowing for easier manipulation and control of the player's physics-based movement.
 {
     [SerializeField] private PlayerController player;
+    [SerializeField] private LayerMask groundMask;
 
     [SerializeField] private Rigidbody2D rb;   // Reference to the Rigidbody component attached to the player GameObject.
     private void Awake()
@@ -21,7 +22,7 @@ public class RigidBodyAdapter : MonoBehaviour   // This class serves as an adapt
     }
     public bool RayCast(float distance)
     {
-        RaycastHit2D hit = Physics2D.Raycast(rb.position, Vector2.down, distance);   // Perform a raycast downwards from the Rigidbody's position to check for ground collision within the specified distance.
+        RaycastHit2D hit = Physics2D.Raycast(rb.position, Vector2.down, distance, groundMask);   // Perform a raycast downwards from the Rigidbody's position to check for ground collision within the specified distance.
         return hit.collider != null; // Return true if the raycast hit something (indicating the player is grounded), otherwise return false.
     }
 }

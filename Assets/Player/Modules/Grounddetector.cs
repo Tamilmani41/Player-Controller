@@ -1,5 +1,3 @@
-using Unity.Android.Gradle.Manifest;
-
 /// <summary>
 ///  Ground detector module, used to detect if the player is grounded or not.
 /// </summary>
@@ -19,14 +17,7 @@ public class Grounddetector
     }
     private bool Raycast()
     {
-        // Request a raycast to the rigidbody adapter, if a modules asks.
-        if (queries != null)
-        {
-            return IsGrounded = queries.RayCast(groundCheckDistance);
-        }
-        else
-        {
-            return IsGrounded = false;
-        }
+        // Perform a raycast to check if the player is grounded, ask the PhysicsQueries class to handle the raycasting logic.
+        return IsGrounded = queries.RayCast(groundCheckDistance)? true : false;
     }
 }

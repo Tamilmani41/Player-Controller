@@ -93,6 +93,34 @@
                     "isPartOfComposite": false
                 }
             ]
+        },
+        {
+            "name": "Debug",
+            "id": "49686298-6b1e-4ca7-8b5a-3b24ef82b256",
+            "actions": [
+                {
+                    "name": "DebugLogPrint",
+                    "type": "Button",
+                    "id": "40344c43-5adb-4c66-86fc-d6ee9979cfc3",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                }
+            ],
+            "bindings": [
+                {
+                    "name": "",
+                    "id": "7643bad0-0a5a-42d1-b284-e2fc6794ac4c",
+                    "path": "<Keyboard>/backquote",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "DebugLogPrint",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                }
+            ]
         }
     ],
     "controlSchemes": []

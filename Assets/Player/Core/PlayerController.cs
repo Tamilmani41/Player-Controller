@@ -20,7 +20,7 @@ public class PlayerController : MonoBehaviour
 
     private bool isGrounded = false;
     private bool jumpQueue = false;
-
+    private bool debugLogPrint = false;
     private void Awake()
     {
         if (input == null)
@@ -40,24 +40,33 @@ public class PlayerController : MonoBehaviour
     public void Tick()
     {
         // Call Module Ticks's || tells the modules to operate at the exact order.
+        InputDetection();   // Check player input.
+        
+        GroundDetection();   // Check if the player is grounded.
+
+        MovementCalculation(); // Calculate movement based on input and grounded state.
+
+        jumpModule.Tick();
+    } 
+    private void InputDetection()
+    {
         input.Tick();   // Update input module to read the latest player inputs.
         moveDir = input.Move.x; // Get the horizontal movement direction from player input.
         jumpQueue = input.JumpQueued; // Get the jump input state from player input.
-
-        GroundDetection();   // Check if the player is grounded.
-
-        movementModule.Tick(moveDir);   // Update movement module with the current move direction.
-
-        FinalSpeed = movementModule.FinalMove;   // Get the final movement speed calculated by the movement module.
-
-        jumpModule.Tick();
+        debugLogPrint = input.DebugLogPrint;
     }
-
-    public void GroundDetection()
+    private void GroundDetection()
     {
-        grounddetector.Tick();  // Update ground detector module to check if the player is grounded.
+        grounddetector.Tick();
         isGrounded = grounddetector.IsGrounded;
-        Debug.Log(isGrounded); // Log the grounded state for debugging purposes.
     }
-
+    private void MovementCalculation()
+    {
+        movementModule.Tick(moveDir);   // Update movement module with the current move direction.
+        FinalSpeed = movementModule.FinalMove;   // Get the final movement speed calculated by the movement module.
+    }
+    private void OnDrawGizmosSelected()
+    {
+        Debug.DrawRay(transform.position, Vector3.down * settings.groundCheckDistance, Color.red);
+    }
 }

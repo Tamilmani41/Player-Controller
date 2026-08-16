@@ -4,16 +4,16 @@
 public class JumpModule
 {
     private float jumpForce;
-    public float Jumpforce { get; private set; }
+    public float F_Jumpforce { get; private set; }
     public JumpModule(PlayerSettings settings)
     {
         jumpForce = settings.jumpforce;
     }
-    public void Tick(bool isGrounded, bool jumpQueued)
+    public void Tick(bool jumpQueued)
     {
-        if (isGrounded && jumpQueued)
+        if (jumpQueued)
         {
-            Jumpforce = jumpForce;
+            F_Jumpforce = jumpForce;
         }
     }
 }

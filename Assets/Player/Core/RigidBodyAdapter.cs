@@ -18,11 +18,31 @@ public class RigidBodyAdapter : MonoBehaviour   // This class serves as an adapt
     private void FixedUpdate()
     {
         // Apply the final movement speed calculated by the PlayerController to the Rigidbody's velocity.
-        rb.linearVelocity = new Vector2(player.FinalSpeed, rb.linearVelocity.y);   // Set the Rigidbody's horizontal velocity based on the player's final speed, while preserving the vertical velocity.
+
+        rb.linearVelocity = new Vector2(player.FinalSpeed, rb.linearVelocity.y);
+
+        if (player.JumpQueue && player.IsGrounded)
+        {
+            Jump();   // If a jump input has been queued, call the Jump method to apply the jump force.
+            player.ResetJumpQueue();   // Reset the jump queue flag after processing the jump.
+        }
+        rb.gravityScale = player.FinalGravity;   // Apply the final gravity value calculated by the PlayerController to the Rigidbody's gravity scale.
     }
+    private void Jump()
+    {
+        rb.AddForce(new Vector2(0f, player.Jumpforce), ForceMode2D.Impulse);   // Apply an impulse force to the Rigidbody for jumping, based on the jump force calculated by the PlayerController.
+    }
+    // Method to perform a raycast downwards to check if the player is grounded.
     public bool RayCast(float distance)
     {
         RaycastHit2D hit = Physics2D.Raycast(rb.position, Vector2.down, distance, groundMask);   // Perform a raycast downwards from the Rigidbody's position to check for ground collision within the specified distance.
         return hit.collider != null; // Return true if the raycast hit something (indicating the player is grounded), otherwise return false.
+    }
+
+    // Helper method to get the current velocity of the Rigidbody.
+    public float GetVelocity()
+    {
+        float velocity = rb.linearVelocityY;   // Output the current velocity of the Rigidbody.
+        return velocity;
     }
 }

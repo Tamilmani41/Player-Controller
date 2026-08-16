@@ -10,18 +10,22 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private PlayerInput input;
     [SerializeField] private PlayerSettings settings;   // Reference to player settings for parameters.
     [SerializeField] private RigidBodyAdapter rigidBodyAdapter;
+
     private Grounddetector grounddetector;
     private PhysicsQueries physicsQueries;
     private MovementModule movementModule;
     private JumpModule jumpModule;
+    private GravityModule gravityModule;
 
     private float moveDir;
     public float FinalSpeed { get; private set; }   // Final movement speed calculated by the movement module.
     public float Jumpforce { get; private set; }
-    
-    public bool JumpQueue = false;
-    private bool isGrounded = false;
+    public bool JumpQueue { get; private set; } = false;
+    public bool IsGrounded { get; private set; } = false;
+    public float FinalGravity { get; private set; } = 0f; // This property can be used to track the final gravity value applied to the player, which can be useful for debugging or other gameplay mechanics.
     private bool debugLogPrint = false;
+
+    public float VelocityY { get; private set; } = 0f; // This property can be used to track the vertical velocity of the player, which can be useful for animations or other gameplay mechanics.
     private void Awake()
     {
         if (input == null)
@@ -31,6 +35,7 @@ public class PlayerController : MonoBehaviour
         grounddetector = new Grounddetector(settings, physicsQueries);  // Initialize ground detector with player settings and physics queries.
         movementModule = new MovementModule(settings);
         jumpModule = new JumpModule(settings);
+        gravityModule = new GravityModule();
     }
     
     // For now Player controller uses the Update method to tick the modules, but in the future, it can be changed to a more sophisticated system if needed.
@@ -48,18 +53,19 @@ public class PlayerController : MonoBehaviour
         MovementCalculation(); // Calculate movement based on input and grounded state.
 
         JumpCalculation();
+
+        GravityCalculation();   
     } 
     private void InputDetection()
     {
         input.Tick();   // Update input module to read the latest player inputs.
         moveDir = input.Move.x; // Get the horizontal movement direction from player input.
-        JumpQueue = input.JumpQueued; // Get the jump input state from player input.
         debugLogPrint = input.DebugLogPrint;
     }
     private void GroundDetection()
     {
         grounddetector.Tick();
-        isGrounded = grounddetector.IsGrounded;
+        IsGrounded = grounddetector.IsGrounded;
     }
     private void MovementCalculation()
     {
@@ -68,9 +74,23 @@ public class PlayerController : MonoBehaviour
     }
     private void JumpCalculation()
     {
-        JumpQueue = input.IsJumpQueued();
-        jumpModule.Tick(isGrounded, JumpQueue);
-        Jumpforce = jumpModule.Jumpforce;
+        if (input.IsJumpQueued())
+        {
+            JumpQueue = true;
+        }
+        jumpModule.Tick(JumpQueue);
+        Jumpforce = jumpModule.F_Jumpforce;
+    }
+    // Reset the jump queue after processing the jump to prevent continuous jumping.
+    public bool ResetJumpQueue()
+    {
+        return JumpQueue = false;
+    }
+    private void GravityCalculation()
+    {
+        VelocityY = rigidBodyAdapter.GetVelocity(); // Update the vertical velocity property based on the Rigidbody's current velocity.
+        gravityModule.Tick(IsGrounded,VelocityY);   // Update gravity module based on whether the player is grounded.
+        FinalGravity = gravityModule.GravityValue; // Update the final gravity property with the calculated gravity value.
     }
     private void OnDrawGizmosSelected()
     {

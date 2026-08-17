@@ -78,7 +78,7 @@ public class PlayerController : MonoBehaviour
         {
             JumpQueue = true;
         }
-        jumpModule.Tick(JumpQueue);
+        jumpModule.Tick(JumpQueue, IsGrounded);
         Jumpforce = jumpModule.F_Jumpforce;
     }
     // Reset the jump queue after processing the jump to prevent continuous jumping.

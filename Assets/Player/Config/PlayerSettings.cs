@@ -10,6 +10,7 @@ public class PlayerSettings
     public float jumpHeight = 2f;
     public float groundCheckDistance = 0.5f;
     public float jumpforce = 5f;
+    public float jumpBufferTime = 0.2f; // Time window to allow jump input after leaving the ground.
     public enum Check
     {
         Down, Up, Left, Right

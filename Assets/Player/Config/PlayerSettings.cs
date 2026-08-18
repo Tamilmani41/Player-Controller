@@ -11,6 +11,7 @@ public class PlayerSettings
     public float groundCheckDistance = 0.5f;
     public float jumpforce = 5f;
     public float jumpBufferTime = 0.2f; // Time window to allow jump input after leaving the ground.
+    public float coyoteTime = 0.2f; // Time window to allow jump input after leaving the ground (Coyote Time).
     public enum Check
     {
         Down, Up, Left, Right

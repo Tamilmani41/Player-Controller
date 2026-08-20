@@ -19,6 +19,7 @@ public class PlayerController : MonoBehaviour
 
     private float moveDir;
     private float deltatime;
+    private bool jumpProcessed = false;
     public float FinalSpeed { get; private set; }   // Final movement speed calculated by the movement module.
     public float Jumpforce { get; private set; }
     public bool JumpQueue { get; private set; } = false;
@@ -80,7 +81,11 @@ public class PlayerController : MonoBehaviour
             JumpQueue = true;
         }
         deltatime = Time.deltaTime;
-        jumpModule.Tick(JumpQueue, IsGrounded, deltatime);
+        jumpProcessed = jumpModule.Tick(JumpQueue, IsGrounded, deltatime, out jumpProcessed);
+        if (jumpProcessed)
+        {
+            ResetJumpQueue(); // Reset the jump queue after processing the jump to prevent continuous jumping.
+        }
         Jumpforce = jumpModule.F_Jumpforce;
     }
     // Reset the jump queue after processing the jump to prevent continuous jumping.

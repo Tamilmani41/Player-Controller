@@ -565,8 +565,8 @@ MonoBehaviour:
     jumpHeight: 5
     groundCheckDistance: 0.7
     jumpforce: 7
-    jumpBufferTime: 1
-    coyoteTime: 1
+    jumpBufferTime: 0.3
+    coyoteTime: 0
   rigidBodyAdapter: {fileID: 967401233}
   BufferTimer: 0
   CoyoteTimer: 0

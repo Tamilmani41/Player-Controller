@@ -25,14 +25,13 @@ public class JumpModule
         bufferTime = settings.jumpBufferTime;
         coyoteTime = settings.coyoteTime;
     }
-    public bool Tick(bool jumpQueued, bool isGrounded, float deltatime, out bool jumpProcessed, out bool jumpApproved)
+    public bool Tick(bool jumpQueued, bool isGrounded, float deltatime, out bool jumpProcessed,out bool jumpApproved)
     {
         // jump approved is uesd to determine if the jump has been approved by any of the jump conditions,
         // which is later used to set jump appreoved in player controller to true, which is later used to apply jump force in the rigidbody adapter.
         jumpApproved = false;
-
         // elseif ladder used to check for jump conditions in order of priority: Normal Jump, Coyote Jump, and Jump Buffer.
-    
+
         if (NormalJump(jumpQueued, isGrounded, out p_NormalInputConsumed))  // If a normal jump is valid, reset both the buffer and coyote timers.
         {
             bufferTimer = 0f; // Reset the buffer timer when a normal jump is valid.
@@ -76,16 +75,17 @@ public class JumpModule
             // which also resets the jump queue in the PlayerController after processing the jump.
             p_JumpBuffer = true;   
         }
-        else if (bufferTimer > 0)   // If the buffer timer is active, decrease it over time.
-        {
-            bufferTimer -= deltatime; // Decrease the buffer timer over time.
-        }
         if (bufferTimer > 0 && isGrounded)
         {
             F_Jumpforce = jumpForce;
             bufferApprove = true;   // Set the buffer approve flag to true to indicate that a jump has been approved from the jump buffer.
             bufferTimer = 0f; // Reset the buffer timer when a jump has been approved from the jump buffer.
         }
+        else if (bufferTimer > 0)   // If the buffer timer is active, decrease it over time.
+        {
+            bufferTimer -= deltatime; // Decrease the buffer timer over time.
+        }
+
         return bufferApprove;    // Return the buffer approve flag to indicate if a jump has been approved from the jump buffer.
     }
     private bool CoyoteTick(bool jumpQueued, bool isGrounded, float deltatime, float coyoteTime, out bool p_CoyoteJump)

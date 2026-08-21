@@ -23,8 +23,10 @@ public class RigidBodyAdapter : MonoBehaviour   // This class serves as an adapt
 
         if (player.Jumprequested)  // Check if a jump has been requested by the PlayerController.
         {
+            Debug.Log($"JUMP APPLIED | Force: {player.Jumpforce} | Grounded: {player.IsGrounded}");
             Jump();   // If a jump input has been queued, call the Jump method to apply the jump force.
             player.ResetJumpRequest();   // Reset the jump request flag in the PlayerController after processing the jump.
+            //player.ResetJumpApproved();   // Reset the jump approved flag in the PlayerController after processing the jump.
         }
         rb.gravityScale = player.FinalGravity;   // Apply the final gravity value calculated by the PlayerController to the Rigidbody's gravity scale.
     }

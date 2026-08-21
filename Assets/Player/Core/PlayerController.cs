@@ -123,6 +123,10 @@ public class PlayerController : MonoBehaviour
     {
         return Jumprequested = false;
     }
+    public bool ResetJumpApproved()
+    {
+        return jumpApproved = false;
+    }
     private void GravityCalculation()
     {
         VelocityY = rigidBodyAdapter.GetVelocity(); // Update the vertical velocity property based on the Rigidbody's current velocity.

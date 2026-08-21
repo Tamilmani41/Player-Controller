@@ -20,12 +20,23 @@ public class PlayerController : MonoBehaviour
     private float moveDir;
     private float deltatime;
     private bool jumpProcessed = false;
+    private bool jumpApproved = false;
+    public bool Jumprequested { get; private set; }
     public float FinalSpeed { get; private set; }   // Final movement speed calculated by the movement module.
     public float Jumpforce { get; private set; }
     public bool JumpQueue { get; private set; } = false;
     public bool IsGrounded { get; private set; } = false;
     public float FinalGravity { get; private set; } = 0f; // This property can be used to track the final gravity value applied to the player, which can be useful for debugging or other gameplay mechanics.
     private bool debugLogPrint = false;
+
+    // Debuging purpose exposing jump module variables to the inspector, can be removed later.
+    [Header("Jump Debug")]
+    [SerializeField] private float BufferTimer; // Expose the buffer timer from the jump module for debugging purposes.
+    [SerializeField] private float CoyoteTimer; // Expose the coyote timer from the jump module for debugging purposes.
+    [SerializeField] private bool NormalInputConsumed; // Expose the normal input consumed flag from the jump module for debugging purposes.
+    [SerializeField] private bool CoyoteInputConsumed; // Expose the coyote input consumed flag from the jump module for debugging purposes.
+    [SerializeField] private bool BufferInputConsumed; // Expose the buffer input consumed flag from the jump module for debugging purposes.
+    [SerializeField] private bool BufferApproved; // Expose the buffer approved flag from the jump module for debugging purposes.
 
     public float VelocityY { get; private set; } = 0f; // This property can be used to track the vertical velocity of the player, which can be useful for animations or other gameplay mechanics.
     private void Awake()
@@ -81,17 +92,36 @@ public class PlayerController : MonoBehaviour
             JumpQueue = true;
         }
         deltatime = Time.deltaTime;
-        jumpProcessed = jumpModule.Tick(JumpQueue, IsGrounded, deltatime, out jumpProcessed);
+
+        // Call the jump module's Tick method to process jump logic based on the current state and input.
+        // The out parameters are used to determine if a jump has been processed and if it has been approved for execution.
+        jumpModule.Tick(JumpQueue, IsGrounded, deltatime, out jumpProcessed, out jumpApproved);
+
         if (jumpProcessed)
         {
             ResetJumpQueue(); // Reset the jump queue after processing the jump to prevent continuous jumping.
         }
+        if (jumpApproved)
+        {
+            Jumprequested = true; // Set jumpRequested to true to indicate that a jump has been processed ana awaiting to be applied in the next physics update.
+        }
         Jumpforce = jumpModule.F_Jumpforce;
+        // debug log for jump module variables, can be removed later.
+        BufferTimer = jumpModule.bufferTimer; // Update the buffer timer for debugging purposes.
+        CoyoteTimer = jumpModule.coyoteTimer;
+        NormalInputConsumed = jumpModule.p_NormalInputConsumed; // Update the normal input consumed flag for debugging purposes.
+        CoyoteInputConsumed = jumpModule.p_CoyoteInputConsumed;
+        BufferInputConsumed = jumpModule.p_BufferInputConsumed;
+        BufferApproved = jumpModule.bufferApprove;
     }
     // Reset the jump queue after processing the jump to prevent continuous jumping.
     public bool ResetJumpQueue()
     {
         return JumpQueue = false;
+    }
+    public bool ResetJumpRequest()
+    {
+        return Jumprequested = false;
     }
     private void GravityCalculation()
     {

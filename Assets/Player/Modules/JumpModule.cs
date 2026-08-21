@@ -1,21 +1,23 @@
-using System.Text;
-
 /// <Summary>
 /// Player's Jump Module Handels Player Jump calculations, includes : Cayotie, Buffer timer logics etc...
 /// </Summary>
 public class JumpModule
 {
-    private float jumpForce;
+    private readonly float jumpForce;
+    // exposing variables to the player controller for debugging purposes, can be modified later to private.
     public float F_Jumpforce { get; private set; }
-    private float bufferTimer = 0f; // Timer to track the jump buffer duration.
-    private float coyoteTimer = 0f; // Timer to track the coyote time duration.
-    private float bufferTime; // Default buffer time, can be set from PlayerSettings if needed.
-    private float coyoteTime; // Time window to allow jump input after leaving the ground (Coyote Time).
+    public float bufferTimer = 0f; // Timer to track the jump buffer duration.
+    public float coyoteTimer = 0f; // Timer to track the coyote time duration.
+    private readonly float bufferTime; // Default buffer time, can be set from PlayerSettings if needed.
+    private readonly float coyoteTime; // Time window to allow jump input after leaving the ground (Coyote Time).
 
-    private bool p_NormalJumpValid;
-    private bool p_CoyoteJump;
-    private bool p_JumpBuffer;
+    // p_ - processed, these bools are used to track the validity of input jumpqueue, and later used to reset the jump queue in the PlayerController after processing the jump.
+    public bool p_NormalInputConsumed;
+    public bool p_CoyoteInputConsumed;
+    public bool p_BufferInputConsumed;
 
+    // Flag to indicate if the jump buffer has been approved for jumping.
+    public bool bufferApprove; 
     // Constructor to initialize the JumpModule with player settings.
     public JumpModule(PlayerSettings settings)
     {
@@ -23,26 +25,34 @@ public class JumpModule
         bufferTime = settings.jumpBufferTime;
         coyoteTime = settings.coyoteTime;
     }
-    public bool Tick(bool jumpQueued, bool isGrounded, float deltatime, out bool jumpProcessed)
+    public bool Tick(bool jumpQueued, bool isGrounded, float deltatime, out bool jumpProcessed, out bool jumpApproved)
     {
-        p_NormalJumpValid = NormalJump(jumpQueued, isGrounded, out p_NormalJumpValid);
-        p_JumpBuffer = JumpBufferTick(jumpQueued, isGrounded, deltatime, bufferTime, out p_JumpBuffer); // Use the buffer time from setting
-        p_CoyoteJump = CoyoteTick(jumpQueued, isGrounded, deltatime, coyoteTime, out p_CoyoteJump   ); // Use the coyote time from setting
+        // jump approved is uesd to determine if the jump has been approved by any of the jump conditions,
+        // which is later used to set jump appreoved in player controller to true, which is later used to apply jump force in the rigidbody adapter.
+        jumpApproved = false;
 
-        if (p_NormalJumpValid)  // If a normal jump is valid, reset the buffer and coyote timers.
+        // elseif ladder used to check for jump conditions in order of priority: Normal Jump, Coyote Jump, and Jump Buffer.
+    
+        if (NormalJump(jumpQueued, isGrounded, out p_NormalInputConsumed))  // If a normal jump is valid, reset both the buffer and coyote timers.
         {
             bufferTimer = 0f; // Reset the buffer timer when a normal jump is valid.
             coyoteTimer = 0f; // Reset the coyote timer when a normal jump is valid.
+            jumpApproved = true; // Set jumpApproved to true when a normal jump is valid.
         }
-        else if (p_JumpBuffer)  // If a jump buffer is valid, reset the coyote timer.
-        {
-            coyoteTimer = 0f; // Reset the coyote timer when a jump buffer is valid.
-        }
-        else if (p_CoyoteJump)  // If a coyote jump is valid, reset the buffer timer.
+        else if (CoyoteTick(jumpQueued, isGrounded, deltatime, coyoteTime, out p_CoyoteInputConsumed)) // If a coyote jump is valid, reset the buffer timer.
         {
             bufferTimer = 0f; // Reset the buffer timer when a coyote jump is valid.
+            jumpApproved = true; // Set jumpApproved to true when a coyote jump is valid.
         }
-        jumpProcessed = p_NormalJumpValid || p_CoyoteJump || p_JumpBuffer;   // If any of the jump conditions are met, set jumpProcessed to true.
+        else if (JumpBufferTick(jumpQueued, isGrounded, deltatime, bufferTime, out p_BufferInputConsumed , out bufferApprove))    // If a jump buffer is valid, reset the coyote timer.
+        {
+            coyoteTimer = 0f; // Reset the coyote timer when a jump buffer is valid.
+            jumpApproved = bufferApprove; // Set jumpApproved to true if the jump buffer is valid and approved.
+        }
+
+        // jump processed is used to determine if any jump condition has been met and processed.
+        // Which later used to reset the jump queue in the PlayerController after processing the jump.
+        jumpProcessed = p_NormalInputConsumed || p_CoyoteInputConsumed || p_BufferInputConsumed;   
         return jumpProcessed;
     }
     private bool NormalJump(bool jumpQueued, bool isGrounded, out bool p_NormalJumpValid)
@@ -55,12 +65,16 @@ public class JumpModule
         }
         return p_NormalJumpValid;    // Return the normal jump flag.
     }
-    private bool JumpBufferTick(bool jumpQueued, bool isGrounded, float deltatime, float bufferTime, out bool p_JumpBuffer)
+    private bool JumpBufferTick(bool jumpQueued, bool isGrounded, float deltatime, float bufferTime, out bool p_JumpBuffer, out bool bufferApprove)
     {
         p_JumpBuffer = false;
-        if (jumpQueued && !isGrounded)  // If jump is queued but player is not grounded, start the buffer timer.
+        bufferApprove = false;
+        if (jumpQueued && !isGrounded && bufferTimer <= 0)  // If jump is queued but player is not grounded and buffer timer is not active, start the buffer timer.
         {
             bufferTimer = bufferTime; // Reset the buffer timer when jump is queued but player is not grounded.
+            // Set the jump buffer flag to true to indicate that a jump has been queued while the player is in the air.
+            // which also resets the jump queue in the PlayerController after processing the jump.
+            p_JumpBuffer = true;   
         }
         else if (bufferTimer > 0)   // If the buffer timer is active, decrease it over time.
         {
@@ -69,9 +83,10 @@ public class JumpModule
         if (bufferTimer > 0 && isGrounded)
         {
             F_Jumpforce = jumpForce;
-            p_JumpBuffer = true;    // If the buffer timer is active and player is grounded, allow jump.
+            bufferApprove = true;   // Set the buffer approve flag to true to indicate that a jump has been approved from the jump buffer.
+            bufferTimer = 0f; // Reset the buffer timer when a jump has been approved from the jump buffer.
         }
-        return p_JumpBuffer;    // Return the jump buffer flag.
+        return bufferApprove;    // Return the buffer approve flag to indicate if a jump has been approved from the jump buffer.
     }
     private bool CoyoteTick(bool jumpQueued, bool isGrounded, float deltatime, float coyoteTime, out bool p_CoyoteJump)
     {

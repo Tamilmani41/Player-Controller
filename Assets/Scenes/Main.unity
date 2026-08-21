@@ -565,9 +565,15 @@ MonoBehaviour:
     jumpHeight: 5
     groundCheckDistance: 0.7
     jumpforce: 7
-    jumpBufferTime: 0.2
-    coyoteTime: 0.2
+    jumpBufferTime: 1
+    coyoteTime: 1
   rigidBodyAdapter: {fileID: 967401233}
+  BufferTimer: 0
+  CoyoteTimer: 0
+  NormalInputConsumed: 0
+  CoyoteInputConsumed: 0
+  BufferInputConsumed: 0
+  BufferApproved: 0
 --- !u!1 &1152817028
 GameObject:
   m_ObjectHideFlags: 0

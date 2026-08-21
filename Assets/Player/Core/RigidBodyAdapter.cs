@@ -21,9 +21,10 @@ public class RigidBodyAdapter : MonoBehaviour   // This class serves as an adapt
 
         rb.linearVelocity = new Vector2(player.FinalSpeed, rb.linearVelocity.y);
 
-        if (player.JumpQueue)  // Check if a jump input has been queued in the PlayerController.
+        if (player.Jumprequested)  // Check if a jump has been requested by the PlayerController.
         {
             Jump();   // If a jump input has been queued, call the Jump method to apply the jump force.
+            player.ResetJumpRequest();   // Reset the jump request flag in the PlayerController after processing the jump.
         }
         rb.gravityScale = player.FinalGravity;   // Apply the final gravity value calculated by the PlayerController to the Rigidbody's gravity scale.
     }

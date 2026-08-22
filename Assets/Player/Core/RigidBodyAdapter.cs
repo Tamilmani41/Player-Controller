@@ -23,7 +23,11 @@ public class RigidBodyAdapter : MonoBehaviour   // This class serves as an adapt
 
         if (player.Jumprequested)  // Check if a jump has been requested by the PlayerController.
         {
-            Debug.Log($"JUMP APPLIED | Force: {player.Jumpforce} | Grounded: {player.IsGrounded}");
+            Debug.Log(
+                $"JUMP APPLIED | Force: {player.Jumpforce} | " +
+                $"Grounded: {player.IsGrounded} | " +
+                $"VelocityY: {rb.linearVelocity.y}"
+            );
             Jump();   // If a jump input has been queued, call the Jump method to apply the jump force.
             player.ResetJumpRequest();   // Reset the jump request flag in the PlayerController after processing the jump.
             //player.ResetJumpApproved();   // Reset the jump approved flag in the PlayerController after processing the jump.
@@ -32,7 +36,7 @@ public class RigidBodyAdapter : MonoBehaviour   // This class serves as an adapt
     }
     private void Jump()
     {
-        rb.AddForce(new Vector2(0f, player.Jumpforce), ForceMode2D.Impulse);   // Apply an impulse force to the Rigidbody for jumping, based on the jump force calculated by the PlayerController.
+        rb.linearVelocity = new Vector2(rb.linearVelocity.x, player.Jumpforce);   // Apply an impulse force to the Rigidbody for jumping, based on the jump force calculated by the PlayerController.
     }
     // Method to perform a raycast downwards to check if the player is grounded.
     public bool RayCast(float distance)

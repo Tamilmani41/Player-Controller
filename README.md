@@ -9,7 +9,7 @@ the `RigidbodyAdapter` handles the engine-facing physics API.
 
 ## Architecture
 
-![Player Controller Architecture](Documentation/architecture.png)
+![Player Controller Architecture](Documentation/Architectural_Diagram.png)
 
 The system is split into two main parts:
 

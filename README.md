@@ -1,7 +1,7 @@
 [README.md](https://github.com/user-attachments/files/31844391/README.md)
 # Modular 2D Player Controller
 
-A modular, physics-based 2D player controller for Unity.
+A modular, physics-based 2D player controller built with Unity 6000.4.0 and C#.
 
 The controller separates gameplay logic from Unity-specific physics
 operations. Gameplay modules are implemented as plain C# classes, while
@@ -9,7 +9,7 @@ the `RigidbodyAdapter` handles the engine-facing physics API.
 
 ## Architecture
 
-![Player Controller Architecture](Documentation/architecture.png)
+![Player Controller Architecture](Documentation/Architecture.png)
 
 The system is split into two main parts:
 
@@ -376,7 +376,7 @@ Assets/
 
 ## Tech Stack
 
--   Unity
+-   Developed with Unity 6000.4.3f1
 -   C#
 -   Unity 2D Physics
 -   `Rigidbody2D`

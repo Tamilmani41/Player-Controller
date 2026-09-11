@@ -39,10 +39,14 @@ public class RigidBodyAdapter : MonoBehaviour   // This class serves as an adapt
         rb.linearVelocity = new Vector2(rb.linearVelocity.x, player.Jumpforce);   // Apply an impulse force to the Rigidbody for jumping, based on the jump force calculated by the PlayerController.
     }
     // Method to perform a raycast downwards to check if the player is grounded.
-    public bool RayCast(float distance)
+    public Collider2D RayCast(float distance)
     {
         RaycastHit2D hit = Physics2D.Raycast(rb.position, Vector2.down, distance, groundMask);   // Perform a raycast downwards from the Rigidbody's position to check for ground collision within the specified distance.
-        return hit.collider != null; // Return true if the raycast hit something (indicating the player is grounded), otherwise return false.
+   
+        if (hit.collider != null)
+            return hit.collider;    // return the collider that is hit.
+        else
+            return null;    // return null if nothing is detected.
     }
 
     // Helper method to get the current velocity of the Rigidbody.

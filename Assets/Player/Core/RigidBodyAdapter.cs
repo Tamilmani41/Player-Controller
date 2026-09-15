@@ -19,7 +19,7 @@ public class RigidBodyAdapter : MonoBehaviour   // This class serves as an adapt
     {
         // Apply the final movement speed calculated by the PlayerController to the Rigidbody's velocity.
 
-        rb.linearVelocity = new Vector2(player.FinalSpeed, rb.linearVelocity.y);
+        rb.linearVelocity = new Vector2(player.FinalVelocity.x, player.FinalVelocity.y);
 
         if (player.Jumprequested)  // Check if a jump has been requested by the PlayerController.
         {

@@ -34,7 +34,7 @@ public class PhysicsQueries
         MovingPlatform platform = GetPlatform();
 
         if (platform == null)
-            return Vector2Data(0, 0);   // return (0, 0) velociy if no moving platform is there. Which simply means no velocity.
+            return new Vector2Data(0, 0);   // return (0, 0) velociy if no moving platform is there. Which simply means no velocity.
         Vector2 velocity = platform.GetCurrentVelocity();   // Get the current unity Vector2 notation, ie... Velocity.
 
         return new Vector2Data(velocity.x, velocity.y);     // give it to our Vector 2 notation.

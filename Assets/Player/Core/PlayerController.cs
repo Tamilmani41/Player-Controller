@@ -16,6 +16,7 @@ public class PlayerController : MonoBehaviour
     private MovementModule movementModule;
     private JumpModule jumpModule;
     private GravityModule gravityModule;
+    private ExternalForceModule externalForceModule;
 
     private float moveDir;
     private float deltatime;
@@ -27,6 +28,7 @@ public class PlayerController : MonoBehaviour
     public bool JumpQueue { get; private set; } = false;
     public bool IsGrounded { get; private set; } = false;
     public float FinalGravity { get; private set; } = 0f; // This property can be used to track the final gravity value applied to the player, which can be useful for debugging or other gameplay mechanics.
+    public Vector2Data FinalVelocity { get; private set; }
     private bool debugLogPrint = false;
 
     // Debuging purpose exposing jump module variables to the inspector, can be removed later.
@@ -49,6 +51,7 @@ public class PlayerController : MonoBehaviour
         movementModule = new MovementModule(settings);
         jumpModule = new JumpModule(settings);
         gravityModule = new GravityModule();
+        externalForceModule = new ExternalForceModule();
     }
     
     // For now Player controller uses the Update method to tick the modules, but in the future, it can be changed to a more sophisticated system if needed.
@@ -67,7 +70,9 @@ public class PlayerController : MonoBehaviour
 
         JumpCalculation();
 
-        GravityCalculation();   
+        GravityCalculation();
+
+        ExternalForces();
     } 
     private void InputDetection()
     {
@@ -132,6 +137,15 @@ public class PlayerController : MonoBehaviour
         VelocityY = rigidBodyAdapter.GetVelocity(); // Update the vertical velocity property based on the Rigidbody's current velocity.
         gravityModule.Tick(IsGrounded,VelocityY);   // Update gravity module based on whether the player is grounded.
         FinalGravity = gravityModule.GravityValue; // Update the final gravity property with the calculated gravity value.
+    }
+    private void ExternalForces()
+    {
+        //  Send the physics queries velocity data to external force module
+        externalForceModule.Tick(physicsQueries.PlatformVelocity());
+
+        Vector2Data external = externalForceModule.externalForceContribution;
+
+        FinalVelocity = new Vector2Data(FinalSpeed + external.x, VelocityY + external.y);
     }
     private void OnDrawGizmosSelected()
     {

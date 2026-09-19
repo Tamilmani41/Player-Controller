@@ -10,6 +10,7 @@ public class MovingPlatform : MonoBehaviour
     private bool isMovingToTarget = true;
     private float elapsedTime = 0f;
     private Vector2 previousPosition;
+    private Vector2 velocity;
 
     void Start()
     {
@@ -35,6 +36,7 @@ public class MovingPlatform : MonoBehaviour
         {
             nextPosition = Vector2.Lerp(targetPosition.position, startPosition, easedT);
         }
+        velocity = (nextPosition - previousPosition) / Time.fixedDeltaTime;
 
         rb.MovePosition(nextPosition);  // move the platform to next position.
 
@@ -52,6 +54,6 @@ public class MovingPlatform : MonoBehaviour
 
     public Vector2 GetCurrentVelocity()
     {
-        return rb.linearVelocity;
+        return velocity;
     }
 }

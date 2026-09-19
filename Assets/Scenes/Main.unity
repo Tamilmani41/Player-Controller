@@ -791,7 +791,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MovingPlatform
   targetPosition: {fileID: 1119806383}
-  movementDuration: 2
+  movementDuration: 6
 --- !u!50 &1152817033
 Rigidbody2D:
   serializedVersion: 5

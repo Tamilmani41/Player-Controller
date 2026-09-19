@@ -144,7 +144,7 @@ public class PlayerController : MonoBehaviour
         externalForceModule.Tick(physicsQueries.PlatformVelocity());
 
         Vector2Data external = externalForceModule.externalForceContribution;
-
+        Debug.Log($"External velocity :{external.x}, {external.y}");
         FinalVelocity = new Vector2Data(FinalSpeed + external.x, VelocityY + external.y);
     }
     private void OnDrawGizmosSelected()

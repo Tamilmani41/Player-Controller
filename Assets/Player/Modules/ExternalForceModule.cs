@@ -1,3 +1,5 @@
+using System.Diagnostics;
+
 /// <summary>
 /// This modules contributes the external forces that comes from the environment.
 /// </summary>

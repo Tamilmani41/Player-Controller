@@ -27,12 +27,13 @@ public class PhysicsQueries
     {
         if (collider == null)
             return null;
+        //Debug.Log($"Got component : {collider.GetComponent<MovingPlatform>()}");
         return collider.GetComponent<MovingPlatform>();
     }
     public Vector2Data PlatformVelocity()   // method for getting platforms velocity
     {
         MovingPlatform platform = GetPlatform();
-
+        Debug.Log($"platform component deceted? :{platform}");
         if (platform == null)
             return new Vector2Data(0, 0);   // return (0, 0) velociy if no moving platform is there. Which simply means no velocity.
         Vector2 velocity = platform.GetCurrentVelocity();   // Get the current unity Vector2 notation, ie... Velocity.

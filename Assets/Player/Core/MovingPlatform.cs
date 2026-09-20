@@ -46,10 +46,7 @@ public class MovingPlatform : MonoBehaviour
             elapsedTime = 0f;
             previousPosition = rb.position; // Reset previous position when changing direction
         }
-        else
-        {
-            previousPosition = rb.position;
-        }
+        previousPosition = nextPosition; // remember the previous position for velocity calculation.
     }
 
     public Vector2 GetCurrentVelocity()
